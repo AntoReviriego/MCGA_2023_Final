@@ -1,7 +1,7 @@
 export type TypeCarrera = {
-    id:number;
+    _id:string;
     carrera: string;
     resolucion: string;
-    pdf: File | null;
+    pdf: string;
     creado: Date
 }

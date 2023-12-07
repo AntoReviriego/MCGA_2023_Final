@@ -1,9 +1,9 @@
-const EventLogger = (_req, _res, next) => {
+const EventLogger = (req, res, next) => {
     console.log('EventLogger. Tercer Middleware')
     console.log({
-        url : _req.originalUrl, 
-        method: _req.method, 
-        body: _req.body
+        url : req.originalUrl, 
+        method: req.method, 
+        body: req.body
     })
     next();
 }

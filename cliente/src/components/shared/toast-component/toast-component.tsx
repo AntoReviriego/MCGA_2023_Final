@@ -1,47 +1,34 @@
-import { useEffect, useState } from 'react';
 import styles from './toast.module.css'
+import Toast from 'react-bootstrap/Toast';
+import { ToastContainer } from 'react-bootstrap';
 import { ToastProps } from './types';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const Toast = ({ title, message }: ToastProps) => {
-    const [progress, setProgress] = useState(0);
-    useEffect(() => {
-      let timer: ReturnType<typeof setTimeout>;
-  
-      const interval = setInterval(() => {
-        if (progress < 100) {
-          setProgress((prevProgress) => prevProgress + 1);
-        }
-      }, 30);
-  
-      timer = setTimeout(() => {
-        clearInterval(interval);
-        // Aquí puedes agregar alguna lógica para cerrar el toast, por ejemplo, cambiando el estado para dejar de mostrarlo
-      }, 3000);
-  
-      return () => {
-        clearInterval(interval);
-        clearTimeout(timer);
-      };
-    }, [progress]);
 
-    return (
-        <div aria-live="polite" aria-atomic="true" className="d-flex justify-content-center align-items-center w-100">
-            <div className="toast-container p-3" id="toastPlacement">
-                <div className="toast">
-                    <div className="toast-header">
-                        <strong className="me-auto">{title}</strong>
-                        {/* <small>11 mins ago</small> */}
-                    </div>
-                    <div className="toast-body">
-                        {message}
-                    </div>
-                </div>
-            </div>
-            <div className={`progress ${styles.progressHeight}`}>
-                <div className={`progress-bar ${styles.progressWidth}`} role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}></div>
-            </div>
-        </div>
-    )
-};
+const _Toast = ({ title, message, url }: ToastProps) => {
+  const [showToast, setShowToast] = useState(true);
+  const navigate = useNavigate();
 
-export default Toast;
+  useEffect(() => {
+    if (!showToast && url) {
+      navigate(url); // Navegar a la URL cuando el Toast se cierra
+    }
+  }, [showToast, url, navigate]);
+  return (
+    <div className={styles.toastStyle}>
+      {showToast && (
+        <ToastContainer position="top-end">
+          <Toast onClose={() => setShowToast(false)} show={showToast} autohide delay={3000} bg='success'>
+            <Toast.Header closeButton={false}>
+              <span className="me-auto" ><i className="fa fa-check" aria-hidden="true"></i> {title} </span>
+              <small>Ahora</small>
+            </Toast.Header>
+            <Toast.Body className='text-white'>{ message }</Toast.Body>
+          </Toast>
+        </ToastContainer>
+      )}
+    </div>
+  );
+}
+export default _Toast;

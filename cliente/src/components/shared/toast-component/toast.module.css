@@ -1,7 +1,6 @@
-.progressHeight {
-    height: 2px;
-}
-  
-.progressWidth {
-    width: 25%;
+.toastStyle {
+    position: absolute;
+    top: 20px; /* Ajusta la distancia desde la parte superior */
+    right: 20px; /* Ajusta la distancia desde la derecha */
+    z-index: 1;
 }

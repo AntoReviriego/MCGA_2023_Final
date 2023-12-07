@@ -6,21 +6,22 @@ import Registro from "../components/registro-component/registro-component"
 import CarreraForm from "../components/carrera-component/carrera-form-component/carrera-form-component"
 
 function RenderRouter() {
-    //const [count, setCount] = useState(0)
-    return (
-     route.map(x => {
-      return <Route path={x.path} element ={x.element}/>
-     })
-    )
-  }
+  return (
+    route.map(x => {
+      return <Route key={x.key} path={x.path} element ={x.element}/>
+    })
+  )
+}
 export default RenderRouter
 
 export const route = [
   {
+    key:"_noticia",
     path: "/", 
     element: <Noticias/>
   }, 
   {
+    key:"noticia",
     path: "/Noticias", 
     element: <Noticias/>
   }, 
@@ -33,11 +34,18 @@ export const route = [
     element: <Registro/>
   }, 
   {
+    key:"carrera",
     path: "/carrera", 
     element: <Carrera/>
   }, 
   {
+    key:"carreraForm",
     path: "/carrera-form", 
+    element: <CarreraForm/>
+  }, 
+  {
+    key:"carreraFormId",
+    path: "/carrera-form/:id", 
     element: <CarreraForm/>
   }, 
 ]

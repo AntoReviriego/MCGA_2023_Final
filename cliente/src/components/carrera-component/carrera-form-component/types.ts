@@ -1,5 +1,5 @@
 export type TypeCarreraForm = {
-    id: number;
+    _id: number;
     carrera: string;
     resolucion: string;
     pdf: string;

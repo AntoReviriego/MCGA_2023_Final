@@ -1,26 +1,134 @@
 import { useEffect, useState } from "react";
 import { TypeCarrera } from './types';
-import  url_Api from '../../services/carrer.services';
+import  url_Api from '../../services/api.services';
 import Spinner from "../shared/spinner-component/spinner-component";
+import { Link } from "react-router-dom";
+import _Modal from "../shared/modal-component/modal-component";
+import _Toast from "../shared/toast-component/toast-component";
+import moment from "moment";
+
 function Carrera() {
   const [carreras, setCarreras] = useState<TypeCarrera[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // spinner
+  const [guardadoExitoso, setGuardadoExitoso] = useState(false); // toast
+  const [modalShow, setModalShow] = useState(false); // modal
+  const [modalData, setModalData] = useState({
+    title: "",
+    subtitle: "",
+    verEliminarBotton: false,
+    data: [],
+    id: ""
+  });
+
+  const formatFecha = (fecha: string) => {
+    const fechaFormateada = moment(fecha).format("DD/MM/YYYY"); // Formato de fecha deseado
+    return fechaFormateada;
+  };
+
+  const convercionObjeto = (carrera : TypeCarrera, EliminarBotton:boolean) => {
+    const excludedProperties = ["_id", "__v"];
+    const filteredCarrera = Object.fromEntries(
+      Object.entries(carrera).filter(([key]) => !excludedProperties.includes(key))
+    );
+    const carreraData = Object.entries(filteredCarrera);
+    let label = ['Carrera', 'Resolución', 'Pdf', 'Fecha Creación', 'Última Actualización']
+    const formattedData:any = carreraData.map(([key, value], i) => ({
+      key: label[i], 
+      value: key === "creado" || key === "actualizado" ? formatFecha(value as string) : value, 
+    }));
+
+    setModalData({
+      title: carrera.carrera, // Usar un campo relevante de la carrera para el título
+      id: carrera._id,
+      subtitle: "Información de la carrera",
+      data: formattedData, // Pasar los datos clave-valor al modal
+      verEliminarBotton: EliminarBotton
+    });
+    setModalShow(true);
+  }
+
+  const cargarCarreras = async () => {
+   await  fetch(url_Api.apiCarrera)
+    .then(response => response.json())
+    .then(data => { 
+      setCarreras(data)
+      setLoading(false);
+    })
+    .catch(error => console.error('Error de datos. Respuesta:', error));
+  }
 
   useEffect(() => {
-    fetch(url_Api.getCarrer)
-      .then(response => response.json())
-      .then(data => { 
-        setCarreras(data)
-        setLoading(false);
-      })
-      .catch(error => console.error('Error fetching data:', error));
+    cargarCarreras();
   }, []);
+
+  
+  const handleDelete = async () => {
+    try {
+      setGuardadoExitoso(false);
+      setModalShow(false);
+      setLoading(true);
+      await fetch(`${url_Api.apiCarrera}/${modalData.id}`, {
+        method: 'DELETE',
+      }).then(data => {
+        if(data.ok){
+          setLoading(false);
+          setGuardadoExitoso(true);
+          cargarCarreras();
+        }
+        else{
+          throw new Error(`Ocurrio un error. Respuesta: ${data}`);
+        }
+      });
+    } catch (error) {
+      console.error('Error al eliminar:', error);
+    }
+  };
+
+  const handlePDFDownload = async (pdf:string) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${url_Api.apiArchivo}/${pdf}`);
+      if (!response.ok) {
+        throw new Error('Error al descargar el PDF');
+      }
+      // Código para descargar el PDF, si es necesario
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+  
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', pdf);
+      document.body.appendChild(link);
+  
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (error) {
+      console.error('Error al descargar el PDF:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
    
   return (
       <div className="container">
         <Spinner showSpinner={loading} />
+        {guardadoExitoso && (
+          <_Toast 
+            title="Éxito"
+            message={`¡Los datos de la carrera ${modalData.title} se eliminaron correctamente!`}
+            url = "/carrera"
+          />
+        )}
+        <_Modal
+          show={modalShow}
+          onHide={() => setModalShow(false)}
+          EliminarRegistro={handleDelete}
+          {...modalData}
+        />
         <h2 className="text-center pb-4">Listado de carreras</h2>
-        <a href="./carrera-form" role="button" className="btn btn-info mb-1"><i className="fas fa-plus-circle"></i> Crear nueva carrera</a>
+        <Link to={'/carrera-form'} className="btn btn-info mb-1">
+          <span className="text-white"><i className="fas fa-plus-circle"></i> Crear nueva carrera</span>
+        </Link>
         <div className="table-responsive">
           <table className="table">
             <thead className="table-dark">
@@ -32,35 +140,41 @@ function Carrera() {
               </tr>
             </thead>
             <tbody>
-              {carreras.map(carrera => (
-                <tr key={carrera.id}>
+              {carreras.map((carrera, index) => (
+                <tr key={index}>
                   <td scope="col">{carrera.carrera}</td>
                   <td scope="col">{carrera.resolucion}</td>
                   <td scope="col">
-                    {carrera.pdf ? (
-                      <span className="badge badge-warning">
-                        <a href={`/storage/${carrera.pdf}`} target="_blank">
-                          PDF
-                          {/* {carrera.pdf.substr(carrera.pdf.lastIndexOf('/') + 1, 25)} */}
-                        </a>
-                      </span>
-                    ) : (
-                      // Agregar un botón o enlace para cargar un PDF, si es necesario
-                      <span className="badge badge-warning">
-                        <button>Cargar PDF</button>
-                      </span>
-                    )}
+                 {carrera.pdf == null ? (
+                    <span className="badge bg-warning">
+                      Cargar PDF
+                    </span>
+                  ) : ( 
+                      <button className="badge bg-success"
+                        onClick={() => handlePDFDownload( (carrera.pdf).split('\\').pop() as string )}
+                      >
+                        { (carrera.pdf).split('\\').pop() as string }
+                      </button>
+                  )}
                   </td>
                   <td scope="col">
-                    <button type="button" className="btn btn-danger mr-1">
-                      <i className="fas fa-trash-alt text-light"></i>
+                    <button className="btn btn-view me-1" onClick={() => {
+                        convercionObjeto(carrera, false);
+                        setModalShow(true);
+                      }}
+                    > 
+                      <span className="text-white"><i className="fas fa-eye text-light"></i></span>
                     </button>
-                    <a href={`/carrera/edit/${carrera.id}`} className="btn btn-dark mr-1">
-                      <i className="far fa-edit text-light"></i>
-                    </a>
-                    <a href={`/carrera/show/${carrera.id}`} className="btn btn-view mr1">
-                      <i className="fas fa-eye text-light"></i>
-                    </a>
+                    <Link to={`/carrera-form/${carrera._id}`} className="btn btn-dark me-1">
+                      <span className="text-white"><i className="far fa-edit text-light"></i></span>
+                    </Link>
+                    <button className="btn btn-danger me-1" onClick={() => {
+                        convercionObjeto(carrera, true);
+                        setModalShow(true);
+                      }}
+                    >
+                      <span className="text-white"><i className="fas fa-trash-alt text-light"></i></span>
+                    </button>
                   </td>
                 </tr>
               ))}
