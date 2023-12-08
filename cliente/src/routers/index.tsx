@@ -1,16 +1,26 @@
-import { Route } from "react-router-dom"
+import { Navigate, Route} from "react-router-dom"
 import Noticias from '../components/noticias-component/noticias-component'
 import Carrera from '../components/carrera-component/carrera-component'
 import Login from "../components/login-component/login-component"
-import Registro from "../components/registro-component/registro-component"
+import Registro from "../components/login-component/registro-component/registro-component"
 import CarreraForm from "../components/carrera-component/carrera-form-component/carrera-form-component"
 
-function RenderRouter() {
+const RenderRouter = () => {
+  let token = "";
+  const _token = localStorage.getItem('token');
+  if (_token !== null && _token !== undefined && _token !== "") {
+    token = _token;
+  }
+
   return (
-    route.map(x => {
-      return <Route key={x.key} path={x.path} element ={x.element}/>
+    route.map(x => { 
+      if (x.requiresAuth && token == "") {
+        return <Route key={x.key} path={x.path} element={<Navigate to="/login" />} />;
+      } else {
+        return <Route key={x.key} path={x.path} element={x.element} />;
+      }
     })
-  )
+  );
 }
 export default RenderRouter
 
@@ -18,34 +28,43 @@ export const route = [
   {
     key:"_noticia",
     path: "/", 
-    element: <Noticias/>
+    element: <Noticias/>,
+    requiresAuth: false,
   }, 
   {
     key:"noticia",
-    path: "/Noticias", 
-    element: <Noticias/>
+    path: "/noticias", 
+    element: <Noticias/>,
+    requiresAuth: false,
   }, 
   {
-    path: "/Login", 
-    element: <Login/>
+    key:"login",
+    path: "/login", 
+    element: <Login/>,
+    requiresAuth: false,
   }, 
   {
-    path: "/Registro", 
-    element: <Registro/>
+    key:"registro",
+    path: "/registro", 
+    element: <Registro/>,
+    requiresAuth: false,
   }, 
   {
     key:"carrera",
     path: "/carrera", 
-    element: <Carrera/>
+    element: <Carrera/>,
+    requiresAuth: true,
   }, 
   {
     key:"carreraForm",
     path: "/carrera-form", 
-    element: <CarreraForm/>
+    element: <CarreraForm/>,
+    requiresAuth: true,
   }, 
   {
     key:"carreraFormId",
     path: "/carrera-form/:id", 
-    element: <CarreraForm/>
+    element: <CarreraForm/>, 
+    requiresAuth: true,
   }, 
 ]

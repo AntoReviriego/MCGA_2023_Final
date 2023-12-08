@@ -1,52 +1,65 @@
-// import { useState } from 'react'
+import { signOut } from "firebase/auth";
+import { useEffect } from "react"
+import { NavDropdown } from "react-bootstrap";
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import { auth } from "../../firebase";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../../provider/user.context.provider";
+import { UserContextType } from "../../provider/type";
 
-function NavBar() {
-   //const [count, setCount] = useState(0)
+const NavBar = () => {
+    const navigate = useNavigate();
+    const { user, setLoggedInUser } = useUser() as UserContextType; 
+    useEffect(() => {
+        const iconUser = localStorage.getItem('user');
+        if (iconUser !== null) {
+            const userObject = JSON.parse(iconUser);
+            if (userObject.email) {
+                setLoggedInUser(userObject.email);
+            }
+        }
+    }, []);
 
-  return (
-    <>
-        <nav className="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div className="container">
-                <a className="navbar-brand" href="/">
-                    Universidad Ficticia
-                </a>
-                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
+    const handleLogOut = async () => {
+        await signOut(auth);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setLoggedInUser(null);
+        navigate("/");
+    }
+    // Verificar si hay un usuario autenticado
+    const isAuthenticated = user !== '' && user !== null;
 
-                <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul className="navbar-nav mr-auto">
-                    <li className="ml-1"><a href='/carrera'>Carrera</a></li>
-                    <li className="ml-1"><a href='/noticias'>Noticia</a></li>
-                    {/* <li className="ml-1"><a href='/carrera'>Alumnos</a></li> */}
-                    </ul>
-                    <ul className="navbar-nav ml-auto">
-                                <li className="nav-item">
-                                    <a className="nav-link" href="/login"> Login</a>
-                                </li>
-                                <li className="nav-item">
-                                    <a className="nav-link" href="/registro"> Registrarse </a>
-                                </li>
-                            {/* <li className="nav-item dropdown">
-                                <a id="navbarDropdown" className="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                  Si esta logueado, nombre
-                                </a>
-
-                                <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a className="dropdown-item" href="{{ route('logout') }}">
-                                       Logout
-                                    </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" className="d-none">
-                                       
-                                    </form>
-                                </div>
-                            </li> */}
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </>
-  )
+    return (
+        <>
+            <Navbar expand="lg" bg="dark" data-bs-theme="dark">
+                <Container>
+                    <Navbar.Brand  className="text-white" href="/">Universidad Ficticia</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+                        <Nav className="me-auto">
+                            {isAuthenticated && (<Nav.Link  className="text-white" href="/carrera">Carrera</Nav.Link> )}
+                            <Nav.Link  className="text-white" href="/noticias">Noticias</Nav.Link>
+                        </Nav>
+                        <Nav>
+                        {!isAuthenticated && (
+                            <>
+                                <Nav.Link className="text-white" href="/login">Iniciar sesión</Nav.Link>
+                                <Nav.Link className="text-white" href="/registro">Registrarse</Nav.Link>
+                            </>
+                        )}
+                        {isAuthenticated && (
+                            <NavDropdown className="text-white" title={<span className="text-white"><i className="fa fa-user-o me-1" aria-hidden="true"></i>{user}</span>} id="navbarScrollingDropdown">
+                                <NavDropdown.Item onClick={handleLogOut}>Salir</NavDropdown.Item>
+                            </NavDropdown>
+                        )}
+                        </Nav>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+        </>
+    )
 }
 export default NavBar

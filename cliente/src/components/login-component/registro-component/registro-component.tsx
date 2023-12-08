@@ -1,15 +1,15 @@
 import { useState } from "react"
-import { TypeLogin } from "./types";
+import { TypeLogin } from "../types";
 import { useForm } from "react-hook-form";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../../firebase";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../../provider/user.context.provider";
-import { UserContextType } from "../../provider/type";
-import { EmailValidacion, PasswordValidacion } from "../../utility/validaciones";
+import { useUser } from "../../../provider/user.context.provider";
+import { UserContextType } from "../../../provider/type";
+import { EmailValidacion, PasswordValidacion } from "../../../utility/validaciones";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 
-const Login = () => {
+const Registro = () => {
     const [validated, setValidated] = useState(false);
     const {
         register,
@@ -31,15 +31,15 @@ const Login = () => {
 
     const onSubmit = async (data:TypeLogin) =>{
         try{
-            const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+            const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
             const user = userCredential.user; 
-            localStorage.setItem("token", await user.getIdToken())
-            localStorage.setItem("user", JSON.stringify(user))
+            localStorage.setItem('token', await user.getIdToken())
+            localStorage.setItem('user', JSON.stringify(user))
             setLoggedInUser(user.email)
             navigate("/")
         }
         catch(error){
-            console.error("Error al loguearse: " + error)
+            console.error("Error al registrarse y loguearse: " + error)
         }
     }
 
@@ -49,7 +49,7 @@ const Login = () => {
                 <div className="row justify-content-center">
                     <div className="col-sm-12 col-md-8 col-lg-6">
                         <Card>
-                            <Card.Header> Iniciar sesión</Card.Header>
+                            <Card.Header> Registrarse </Card.Header>
                             <Card.Body>
                                 <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
                                     <Row className="mb-3">
@@ -63,7 +63,7 @@ const Login = () => {
                                             />
                                             <Form.Control.Feedback type="invalid">
                                                 {errors.email && errors.email.message}
-                                            </Form.Control.Feedback>
+                                            </Form.Control.Feedback>                                    
                                         </Form.Group>
                                     </Row>
                                     <Row className="mb-3">
@@ -80,7 +80,7 @@ const Login = () => {
                                             </Form.Control.Feedback>
                                         </Form.Group>
                                     </Row>
-                                    <Button type="submit">Iniciar sesión</Button>
+                                    <Button type="submit">Registarse</Button>
                                 </Form>
                             </Card.Body>
                         </Card>
@@ -90,4 +90,4 @@ const Login = () => {
         </>
     )
 }
-export default Login
+export default Registro
