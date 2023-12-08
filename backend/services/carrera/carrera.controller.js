@@ -22,14 +22,11 @@ const getCarrerById = async (req, res) => {
     }
 };
 
-
-
 const postCarrer = async (req, res) => {
     subida.single('pdf')(req, res, async (err) => {
         if (err) {
           return res.status(500).json({ error: 'Error al subir el archivo', err });
         }
-    
         try {
           const newCarrer = new Carrera({
             carrera: req.body.carrera,
@@ -49,14 +46,24 @@ const postCarrer = async (req, res) => {
 const patchCarrer = async (req, res) => {
     try {
         const  id  = req.params.id
-        const {carrera, resolucion, pdf} = req.body;
-        const carreraUpdate = await Carrera.findByIdAndUpdate(id, { 
-            carrera, 
-            resolucion,
-            pdf,
-            actualizado: new Date().getDate()
-        });
-        res.status(200).json(carreraUpdate); // Devuelve el documento guardado como respuesta
+        subida.single('pdf')(req, res, async (err) => {
+          if (err) {
+            return res.status(500).json({ error: 'Error al subir el archivo', err });
+          }
+          try {
+            const {carrera, resolucion} = req.body;
+            const carreraUpdate = await Carrera.findByIdAndUpdate(id, { 
+              carrera: carrera, 
+              resolucion: resolucion,
+              pdf: req.file ? req.file.path.split('/').pop() : null,
+              actualizado: new Date().getDate()
+            });
+            res.status(200).json(carreraUpdate); // Devuelve el documento guardado como respuesta
+          } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: 'Error al guardar la carrera' });
+          }
+      });
     } catch (error) {
         res.status(500).json({ error: 'Error al editar la carrera' }); // Manejo de errores
     }
