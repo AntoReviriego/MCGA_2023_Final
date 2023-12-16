@@ -1,7 +1,7 @@
 import { Modal } from "react-bootstrap";
 
 const _Modal = (props:any) => {
-    const { title, subtitle, message, data, verEliminarBotton, EliminarRegistro, ...modalProps } = props;
+    const { title, subtitle, message, data, type, verEliminarBotton, EliminarRegistro, ...modalProps } = props;
 
     const handleEliminar = async () => {
         if (EliminarRegistro) {
@@ -14,6 +14,7 @@ const _Modal = (props:any) => {
             size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+            scrollable={true}
         >
             <Modal.Header closeButton onClick={props.onHide}>
             <Modal.Title id="contained-modal-title-vcenter">
@@ -22,17 +23,30 @@ const _Modal = (props:any) => {
             </Modal.Header>
             <Modal.Body>
             <h4>{ subtitle }</h4>
-            <ul>
-                {data.map((item:any, index:number) => (
-                <li key={index}>
-                <strong>{item.key}:</strong> {item.value}
-                </li>
-            ))}
+            {(type === "") ? (
+                    <>
+                        <ul>
+                            {data.map((item:any, index:number) => (
+                            <li key={index}>
+                            <strong>{item.key}:</strong> {item.value}
+                            </li>
+                        ))}
 
-            </ul>
+                        </ul>
+                        
+                    </>
+                ) : (
+                    <div>
+                        {data.map((item:any, index:number) => (
+                            <p key={index}> <strong>{item.key}:</strong> {item.value} </p>
+                        ))}
+                    </div>
+
+                )   
+            }
             <p>
                 { message }
-            </p>
+            </p>   
             </Modal.Body>
             <Modal.Footer>
                 <button onClick={props.onHide} className="btn btn-secondary">Cerrar</button>

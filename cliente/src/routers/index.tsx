@@ -45,6 +45,12 @@ export const route = [
     requiresAuth: true,
   },
   {
+    key:"noticiaFormId",
+    path: "/noticia-form/:id", 
+    element: <NoticiaForm/>, 
+    requiresAuth: true,
+  }, 
+  {
     key:"login",
     path: "/login", 
     element: <Login/>,
