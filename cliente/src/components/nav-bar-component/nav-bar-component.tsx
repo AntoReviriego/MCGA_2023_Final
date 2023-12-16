@@ -40,8 +40,13 @@ const NavBar = () => {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                         <Nav className="me-auto">
-                            {isAuthenticated && (<Nav.Link  className="text-white" href="/carrera">Carrera</Nav.Link> )}
                             <Nav.Link  className="text-white" href="/noticias">Noticias</Nav.Link>
+                            {isAuthenticated && (
+                                <>
+                                    <Nav.Link  className="text-white" href="/carrera">Carrera</Nav.Link> 
+                                    <Nav.Link  className="text-white" href="/noticias-form"><i className="fas fa-plus-circle"></i> Nueva Noticia</Nav.Link>
+                                </>
+                            )}
                         </Nav>
                         <Nav>
                         {!isAuthenticated && (
