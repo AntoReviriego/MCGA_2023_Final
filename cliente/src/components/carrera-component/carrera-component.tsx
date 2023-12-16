@@ -17,7 +17,8 @@ function Carrera() {
     subtitle: "",
     verEliminarBotton: false,
     data: [],
-    id: ""
+    id: "", 
+    type:""
   });
 
   const formatFecha = (fecha: string) => {
@@ -42,7 +43,8 @@ function Carrera() {
       id: carrera._id,
       subtitle: "Información de la carrera",
       data: formattedData, // Pasar los datos clave-valor al modal
-      verEliminarBotton: EliminarBotton
+      verEliminarBotton: EliminarBotton, 
+      type: ""
     });
     setModalShow(true);
   }

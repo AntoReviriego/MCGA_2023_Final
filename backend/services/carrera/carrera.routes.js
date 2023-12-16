@@ -1,15 +1,15 @@
 const express = require('express'); 
-const { getCarrer, getCarrerById, postCarrer, patchCarrer, deleteCarrera } = require('./carrera.controller')
+const { getCarrera, getCarreraById, postCarrera, patchCarrera, deleteCarrera } = require('./carrera.controller')
 
-const carrerRoutes = express.Router();
+const carreraRoutes = express.Router();
 
-carrerRoutes.route('/')
-    .get(getCarrer)
-    .post(postCarrer)
+carreraRoutes.route('/')
+    .get(getCarrera)
+    .post(postCarrera)
 
-carrerRoutes.route('/:id')
-    .get(getCarrerById)
-    .patch(patchCarrer)
+carreraRoutes.route('/:id')
+    .get(getCarreraById)
+    .patch(patchCarrera)
     .delete(deleteCarrera)
 
-module.exports = carrerRoutes
+module.exports = carreraRoutes

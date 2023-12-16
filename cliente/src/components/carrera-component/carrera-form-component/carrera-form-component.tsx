@@ -76,7 +76,6 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
         body: formData,
       });
       if (response.ok) {
-        debugger;
         setLoading(false);
         setGuardadoExitoso(true);
         console.log(guardadoExitoso)
@@ -143,6 +142,7 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
                       <Form.Label>Subir PDF</Form.Label>
                       <Form.Control
                         type="file"
+                        value={carreraData?.pdf}
                         {...register('pdf')}
                       />
                     </Form.Group>
