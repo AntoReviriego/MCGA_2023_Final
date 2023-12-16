@@ -44,7 +44,7 @@ const NavBar = () => {
                             {isAuthenticated && (
                                 <>
                                     <Nav.Link  className="text-white" href="/carrera">Carrera</Nav.Link> 
-                                    <Nav.Link  className="text-white" href="/noticias-form"><i className="fas fa-plus-circle"></i> Nueva Noticia</Nav.Link>
+                                    <Nav.Link  className="text-white" href="/noticia-form"><i className="fas fa-plus-circle"></i> Nueva Noticia</Nav.Link>
                                 </>
                             )}
                         </Nav>

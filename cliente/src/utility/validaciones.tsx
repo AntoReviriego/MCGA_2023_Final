@@ -25,3 +25,15 @@ export const inputTextRequeridoValidacion = {
         message: "El campo debe tener al menos 8 caracteres.",
     },
 };
+
+export const inputTextareaRequeridoValidacion = {
+    required: "Este campo es requerido",
+    minLength: {
+        value: 100,
+        message: "El campo debe tener al menos 100 caracteres.",
+    },
+    maxLength: {
+        value: 1000,
+        message: "El campo puede tener como maximo 1000 caracteres.",
+    },
+};
