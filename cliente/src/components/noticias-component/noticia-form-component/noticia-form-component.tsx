@@ -116,6 +116,7 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
       {guardadoExitoso && (
         <_Toast 
           title="Éxito"
+          type=""
           message={`¡Los datos de la noticia se guardaron correctamente!`}
           url = "/noticias"
         />
