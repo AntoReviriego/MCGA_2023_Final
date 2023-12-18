@@ -132,6 +132,7 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
                       <Form.Label>Titulo</Form.Label>
                       <Form.Control
                         required
+                        minLength={8}
                         type="text"
                         placeholder="Titulo de la noticia"
                         value={noticiaData?.titulo}
@@ -169,6 +170,8 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
                             <Form.Control 
                                 as="textarea" 
                                 required
+                                minLength={100}
+                                maxLength={1000}
                                 rows={6} 
                                 placeholder="Desarrolle su noticia" 
                                 {...register('cuerpo', inputTextareaRequeridoValidacion)} 

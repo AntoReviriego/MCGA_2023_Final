@@ -96,6 +96,7 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
       {guardadoExitoso && (
         <_Toast 
           title="Éxito"
+          type=""
           message={`¡Los datos de la carrera se guardaron correctamente!`}
           url = "/carrera"
         />
@@ -112,6 +113,7 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
                       <Form.Label>Nombre de la carrera</Form.Label>
                       <Form.Control
                         required
+                        minLength={8}
                         type="text"
                         placeholder="Ingenieria en Sistemas"
                         value={carreraData?.carrera}

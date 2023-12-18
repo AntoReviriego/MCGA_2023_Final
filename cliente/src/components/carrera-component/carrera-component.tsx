@@ -117,6 +117,7 @@ function Carrera() {
         {guardadoExitoso && (
           <_Toast 
             title="Éxito"
+            type=""
             message={`¡Los datos de la carrera ${modalData.title} se eliminaron correctamente!`}
             url = "/carrera"
           />

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-const _Toast = ({ title, message, url }: ToastProps) => {
+const _Toast = ({ title, type, message, url, }: ToastProps) => {
   const [showToast, setShowToast] = useState(true);
   const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ const _Toast = ({ title, message, url }: ToastProps) => {
     <div className={styles.toastStyle}>
       {showToast && (
         <ToastContainer position="top-end">
-          <Toast onClose={() => setShowToast(false)} show={showToast} autohide delay={3000} bg='success'>
+          <Toast onClose={() => setShowToast(false)} show={showToast} autohide delay={3000} bg= { type != undefined && type == 'err' ? 'danger' : 'success'}>
             <Toast.Header closeButton={false}>
               <span className="me-auto" ><i className="fa fa-check" aria-hidden="true"></i> {title} </span>
               <small>Ahora</small>

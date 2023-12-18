@@ -8,13 +8,18 @@ import { useUser } from "../../provider/user.context.provider";
 import { UserContextType } from "../../provider/type";
 import { EmailValidacion, PasswordValidacion } from "../../utility/validaciones";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
+import _Toast from "../shared/toast-component/toast-component";
+import Spinner from "../shared/spinner-component/spinner-component";
 
 const Login = () => {
     const [validated, setValidated] = useState(false);
+    const [guardadoExitoso, setGuardadoExitoso] = useState(false); // toast
+    const [loading, setLoading] = useState(false); // spinner
     const {
         register,
         handleSubmit: validateForm,
         formState: { errors },
+        reset,
     } = useForm<TypeLogin>();
     const navigate = useNavigate();
     const { setLoggedInUser } = useUser() as UserContextType;
@@ -30,21 +35,34 @@ const Login = () => {
     };
 
     const onSubmit = async (data:TypeLogin) =>{
+        setLoading(true)
         try{
             const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
             const user = userCredential.user; 
-            localStorage.setItem("token", await user.getIdToken())
-            localStorage.setItem("user", JSON.stringify(user))
-            setLoggedInUser(user.email)
-            navigate("/")
+            localStorage.setItem("token", await user.getIdToken());
+            localStorage.setItem("user", JSON.stringify(user));
+            setLoggedInUser(user.email);
+            navigate("/");
         }
         catch(error){
-            console.error("Error al loguearse: " + error)
+            setLoading(false);
+            setGuardadoExitoso(true);
+            reset(); // Restablece los valores del formulario en caso de error
+            console.error("Error al loguearse: " + error);
         }
     }
 
     return (
         <>
+            <Spinner showSpinner={loading} />
+            {guardadoExitoso && (
+                <_Toast 
+                title="Error"
+                type="err"
+                message={`¡Los datos no son correctos. Recuerde que debe estar registrado!`}
+                url = "/login"
+                />
+            )}
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="col-sm-12 col-md-8 col-lg-6">
@@ -57,6 +75,7 @@ const Login = () => {
                                             <Form.Label>Email</Form.Label>
                                             <Form.Control
                                                 required
+                                                pattern="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/"
                                                 type="email"
                                                 placeholder="correo@correo.com"
                                                 {...register("email", EmailValidacion)}
@@ -71,6 +90,7 @@ const Login = () => {
                                             <Form.Label>Contraseña</Form.Label>
                                             <Form.Control 
                                                 required
+                                                minLength={8}
                                                 type="password" 
                                                 placeholder="*************" 
                                                 {...register("password", PasswordValidacion)}

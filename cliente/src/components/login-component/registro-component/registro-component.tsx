@@ -8,13 +8,18 @@ import { useUser } from "../../../provider/user.context.provider";
 import { UserContextType } from "../../../provider/type";
 import { EmailValidacion, PasswordValidacion } from "../../../utility/validaciones";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
+import Spinner from "../../shared/spinner-component/spinner-component";
+import _Toast from "../../shared/toast-component/toast-component";
 
 const Registro = () => {
     const [validated, setValidated] = useState(false);
+    const [guardadoExitoso, setGuardadoExitoso] = useState(false); // toast
+    const [loading, setLoading] = useState(false); // spinner
     const {
         register,
         handleSubmit: validateForm,
         formState: { errors },
+        reset
     } = useForm<TypeLogin>();
     const navigate = useNavigate();
     const { setLoggedInUser } = useUser() as UserContextType;
@@ -30,6 +35,7 @@ const Registro = () => {
     };
 
     const onSubmit = async (data:TypeLogin) =>{
+        setLoading(true)
         try{
             const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
             const user = userCredential.user; 
@@ -39,12 +45,24 @@ const Registro = () => {
             navigate("/")
         }
         catch(error){
+            setLoading(false);
+            setGuardadoExitoso(true);
+            reset(); // Restablece los valores del formulario en caso de error
             console.error("Error al registrarse y loguearse: " + error)
         }
     }
 
     return (
         <>
+            <Spinner showSpinner={loading} />
+            {guardadoExitoso && (
+                <_Toast 
+                    title="Error"
+                    type="err"
+                    message={`¡No se cumplieron los requisistos!`}
+                    url = "/login"
+                />
+            )}
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="col-sm-12 col-md-8 col-lg-6">
@@ -57,6 +75,7 @@ const Registro = () => {
                                             <Form.Label>Email</Form.Label>
                                             <Form.Control
                                                 required
+                                                pattern="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/"
                                                 type="email"
                                                 placeholder="correo@correo.com"
                                                 {...register("email", EmailValidacion)}
@@ -71,6 +90,7 @@ const Registro = () => {
                                             <Form.Label>Contraseña</Form.Label>
                                             <Form.Control 
                                                 required
+                                                minLength={8}
                                                 type="password" 
                                                 placeholder="*************" 
                                                 {...register("password", PasswordValidacion)}
