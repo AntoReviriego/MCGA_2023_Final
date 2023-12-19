@@ -10,11 +10,14 @@ import _Modal from "../shared/modal-component/modal-component";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import { TypeCarrera } from "../carrera-component/types";
+import _Toast from "../shared/toast-component/toast-component";
 
 const Noticias = () => {
   const [noticias, setNoticias] = useState<TypeNoticia[]>([]);
+  const [guardadoExitoso, setGuardadoExitoso] = useState(false); // toast
   const [modalShow, setModalShow] = useState(false); // modal
   const [loading, setLoading] = useState(true); // spinner
+  const [loadedImages, setLoadedImages] = useState<{ [key: string]: string }>({});
   const { user } = useUser() as UserContextType; 
   const [modalData, setModalData] = useState({
     title: "",
@@ -73,11 +76,15 @@ const Noticias = () => {
   useEffect(() => {
     cargarNoticias();
   }, []);
+
+  useEffect(() => {
+    cargarImagenes();
+  }, [noticias]); // Vuelve a cargar las imágenes cuando cambian las noticias
   
   const handlePDFDownload = async (pdf:string) => {
     setLoading(true);
     try {
-      const response = await fetch(`${url_Api.apiArchivo}/${pdf}`);
+      const response = await fetch(`${url_Api.apiArchivo}/d/${pdf}`);
       if (!response.ok) {
         throw new Error('Error al descargar el PDF');
       }
@@ -98,14 +105,68 @@ const Noticias = () => {
       setLoading(false);
     }
   };
+
+  const cargarImagen = async (img: string) => {
+    try {
+      if(img != "null" && img != "" && img != null){
+        const response = await fetch(`${url_Api.apiArchivo}/${img}`);
+        if (!response.ok) {
+          throw new Error('Error al mostrar IMG');
+        }
+        const blob = await response.blob(); // Obtener el contenido de la respuesta como un blob
+        const imgUrl = URL.createObjectURL(blob); // Crear una URL para el blob (contenido de la imagen)
+        return imgUrl || reactLogo; // Si la URL está vacía, usar reactLogo
+      }
+      return reactLogo;
+    } catch (error) {
+      console.error('Error al cargar la imagen:', error);
+      return reactLogo; // En caso de error, usar reactLogo
+    }
+  };
+ 
+  const cargarImagenes = async () => {
+    const images: { [key: string]: string } = {};
+    await Promise.all(
+      noticias.map(async (noticia, index) => {
+        if(noticia.img != "null" && noticia.img != "" && noticia.img != null){
+          try {
+            const imgUrl = await cargarImagen(noticia.img);
+            images[index] = imgUrl;
+          } catch (error) {
+            console.error('Error al cargar la imagen:', error);
+            images[index] = reactLogo; // Usa reactLogo en caso de error
+          }
+        }
+       
+      })
+    );
+    setLoadedImages(images);
+  };
+
+  const handleDelete = async () => {
+    try {
+      
+    } catch (error) {
+      console.error('Error al eliminar:', error);
+    }
+  };
+
  
   return (
     <>
       <Spinner showSpinner={loading} />
+      {guardadoExitoso && (
+          <_Toast 
+            title="Éxito"
+            type=""
+            message={`¡Los datos de la noticia ${modalData.title} se eliminaron correctamente!`}
+            url = "/noticias"
+          />
+        )}
       <_Modal
           show={modalShow}
           onHide={() => setModalShow(false)}
-          // EliminarRegistro={handleDelete}
+          EliminarRegistro={handleDelete}
           {...modalData}
         />
       <div className="container">
@@ -113,7 +174,7 @@ const Noticias = () => {
           {noticias.map((noticia, index) => (   
             <Col sm={12} md={6} lg={6} className="mb-2">
               <Card key={index} >
-                <Card.Img variant="top" src={reactLogo} width="400" height="250"/>
+                <Card.Img variant="top" src={loadedImages[index] || reactLogo} width="400" height="250"/>
                 <div className="dropdown-divider"></div>
                 <Card.Body>
                   <Card.Title>  {(noticia.titulo).length > 120 ? (noticia.titulo).slice(0, 120).concat('...') : (noticia.titulo)}</Card.Title>

@@ -1,4 +1,5 @@
 const Noticia = require('./noticia.model');
+const { subida } = require('../subidaArchivo/subirArchivo');
 
 const getNoticia = async (req, res) => {
   try {
@@ -22,15 +23,33 @@ const getNoticiaById = async (req, res) => {
 };
 
 const postNoticia = async (req, res) => {
-  
+  subida.single('img')(req, res, async (err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error al subir el archivo', err });
+    }
+   
+    // Logica de post
+  });
 };
 
 const patchNoticia = async (req, res) => {
-  
+  try {
+    const  id  = req.params.id
+    subida.single('img')(req, res, async (err) => {
+      // Logica de patch
+  });
+} catch (error) {
+  res.status(500).json({ error: 'Error al editar la noticia' }); // Manejo de errores
+}
 };
 
 const deleteNoticia = async (req, res) => {
- 
+  try {
+    // logica delete 
+  } catch (error) {
+    console.error('Error al eliminar la noticia:', error);
+    res.status(500).json({ error: 'Error al eliminar la noticia' });
+  }
 };
 
 

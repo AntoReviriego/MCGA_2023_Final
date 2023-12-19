@@ -10,7 +10,6 @@ const getDescargaArchivos = async (req, res) => {
     if (!existeArchivo) {
       return res.status(404).json({ error: 'Archivo no encontrado' });
     }
-    tt = filePath
     res.download(filePath, filename, (error) => {
       if (error) {
         console.error('Error al descargar el archivo:', error);
@@ -23,6 +22,28 @@ const getDescargaArchivos = async (req, res) => {
   }
 };
 
+const getVerImg = async (req, res) => {
+  try {
+    const filename = req.params.url;
+    const filePath = path.resolve('./uploads', filename); // Convierte la ruta a absoluta
+    const existeArchivo = fs.existsSync(filePath);
+    
+    if (!existeArchivo) {
+      return res.status(404).json({ error: 'Imagen no encontrada' });
+    }
+    // Envía la imagen como respuesta
+    res.sendFile(filePath);
+
+  } catch (error) {
+    console.error('Error al obtener la imagen:', error);
+    console.error('Ruta del archivo:', filePath);
+    console.error('Nombre del archivo:', filename);
+    console.error('Stack Trace:', error.stack);
+    res.status(500).json({ error: 'Error al obtener la imagen' });
+  }
+};
+
 module.exports = {
-  getDescargaArchivos
+  getDescargaArchivos, 
+  getVerImg
 };

@@ -5,7 +5,14 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const { carrera, resolucion } = req.body;
-    const nombreArchivo = `${carrera.replace(/\s/g, '_')}_${resolucion.replace(/\s/g, '_')}_${Date.now()}_${file.originalname}`;
+    let nombreArchivo = "";
+    if(carrera != null && carrera != undefined){
+      nombreArchivo = `${carrera.replace(/\s/g, '_')}_${resolucion.replace(/\s/g, '_')}_${Date.now()}_${file.originalname}`;
+    }
+    else{
+      nombreArchivo = `_${Date.now()}_${file.originalname}`;
+    }
+
     cb(null, nombreArchivo); // Nombre de archivo combinado único
   },
 });

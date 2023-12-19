@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Card, Col, Form, Row } from "react-bootstrap"
 import _Toast from "../../shared/toast-component/toast-component"
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,14 +8,15 @@ import Spinner from "../../shared/spinner-component/spinner-component";
 import { inputTextRequeridoValidacion, inputTextareaRequeridoValidacion } from "../../../utility/validaciones";
 import url_Api from "../../../services/api.services";
 import { TypeCarrera } from "../../carrera-component/types";
-
-
+import { UserContextType } from "../../../provider/type";
+import { useUser } from "../../../provider/user.context.provider";
 
 const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
     const [carreras, setCarreras] = useState<TypeCarrera[]>([]);
     const [validated, setValidated] = useState(false);
     const [loading, setLoading] = useState(false); // spinner
     const [guardadoExitoso, setGuardadoExitoso] = useState(false); // toast
+    const { user } = useUser() as UserContextType; 
     const { id } = useParams<{ id: string }>();
     const {
         register,
@@ -64,21 +64,7 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
       const onSubmit = async (data:TypeNoticiaForm) => {
         setLoading(true);
         try {
-        //   const formData = new FormData();
-        //   formData.append('carrera', data.carrera);
-        //   formData.append('resolucion', data.resolucion);
-        //   if (data.pdf.length > 0) {
-        //     formData.append('pdf', data.pdf[0]);
-        //   }
-        //   const response = await fetch(id ? `${url_Api.apiCarrera}/${id}` : url_Api.apiCarrera, {
-        //     method: id ? 'PATCH' : 'POST',
-        //     body: formData,
-        //   });
-        //   if (response.ok) {
-        //     setLoading(false);
-        //     setGuardadoExitoso(true);
-        //     console.log(guardadoExitoso)
-        //   }
+          
         } catch (error) {
           console.error('Error al enviar formulario:', error);
           setLoading(false);
@@ -90,24 +76,24 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
     }
 
     const cargarCarrera = async () => {
-        try {
-          const response = await fetch(url_Api.apiCarrera);
-          if (!response.ok) {
-            throw new Error("Error al cargar las carrera");
-          }
-          const data = await response.json();
-          setCarreras(data);
-          setLoading(false);
-        } catch (error) {
-          console.error("Error al cargar las noticias:", error);
+      try {
+        const response = await fetch(url_Api.apiCarrera);
+        if (!response.ok) {
+          throw new Error("Error al cargar las carrera");
         }
-      };
+        const data = await response.json();
+        setCarreras(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error al cargar las noticias:", error);
+      }
+    };
 
     useEffect(() => {
-        cargarCarrera();
-        if(id !== undefined){
-            getNoticiaId()
-        }
+      cargarCarrera();
+      if(id !== undefined){
+        getNoticiaId()
+      }
     }, [id, setValue]);
     
     return (
@@ -147,7 +133,7 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
                   <Row className="mb-3">
                     <Form.Group as={Col} md="12" controlId="id_carrera">
                         <Form.Label>Carrera</Form.Label>
-                        <Form.Select aria-label="" {...register("id_carrera")}>
+                        <Form.Select aria-label="id_carrera" {...register('id_carrera')}>
                             {carreras.map((carrera) => (
                                 <option key={carrera._id} value={carrera._id}>
                                     {carrera.carrera}

@@ -89,7 +89,7 @@ function Carrera() {
   const handlePDFDownload = async (pdf:string) => {
     setLoading(true);
     try {
-      const response = await fetch(`${url_Api.apiArchivo}/${pdf}`);
+      const response = await fetch(`${url_Api.apiArchivo}/d/${pdf}`);
       if (!response.ok) {
         throw new Error('Error al descargar el PDF');
       }
