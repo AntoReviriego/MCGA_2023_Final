@@ -145,7 +145,21 @@ const Noticias = () => {
 
   const handleDelete = async () => {
     try {
-      
+      setGuardadoExitoso(false);
+      setModalShow(false);
+      setLoading(true);
+      await fetch(`${url_Api.apiNoticia}/${modalData.id}`, {
+        method: 'DELETE',
+      }).then(data => {
+        if(data.ok){
+          setLoading(false);
+          setGuardadoExitoso(true);
+          cargarNoticias();
+        }
+        else{
+          throw new Error(`Ocurrio un error. Respuesta: ${data}`);
+        }
+      });
     } catch (error) {
       console.error('Error al eliminar:', error);
     }

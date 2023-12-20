@@ -16,6 +16,7 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
     const [validated, setValidated] = useState(false);
     const [loading, setLoading] = useState(false); // spinner
     const [guardadoExitoso, setGuardadoExitoso] = useState(false); // toast
+    const [selectedCarrera, setSelectedCarrera] = useState('');
     const { user } = useUser() as UserContextType; 
     const { id } = useParams<{ id: string }>();
     const {
@@ -43,6 +44,10 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
           console.error('Error de datos. Respuesta:', error);
         });
     }
+    const handleCarreraChange = (event:any) => {
+      const selectedId = event.target.value;
+      setSelectedCarrera(selectedId);
+    };
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -64,7 +69,22 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
       const onSubmit = async (data:TypeNoticiaForm) => {
         setLoading(true);
         try {
-          
+          const formData = new FormData();
+          formData.append('titulo', data.titulo);
+          formData.append('cuerpo', data.cuerpo);
+          formData.append('id_carrera', data.id_carrera);
+          formData.append('autor', user);
+          if (data.img != null && data.img.length > 0) {
+            formData.append('img', data.img[0]);
+          }
+          const response = await fetch(id ? `${url_Api.apiNoticia}/${id}` : url_Api.apiNoticia, {
+            method: id ? 'PATCH' : 'POST',
+            body: formData,
+          });
+          if (response.ok) {
+            setLoading(false);
+            setGuardadoExitoso(true);
+          }
         } catch (error) {
           console.error('Error al enviar formulario:', error);
           setLoading(false);
@@ -133,7 +153,7 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
                   <Row className="mb-3">
                     <Form.Group as={Col} md="12" controlId="id_carrera">
                         <Form.Label>Carrera</Form.Label>
-                        <Form.Select aria-label="id_carrera" {...register('id_carrera')}>
+                        <Form.Select aria-label="id_carrera" {...register('id_carrera')}  onChange={handleCarreraChange}  value={selectedCarrera}>
                             {carreras.map((carrera) => (
                                 <option key={carrera._id} value={carrera._id}>
                                     {carrera.carrera}
