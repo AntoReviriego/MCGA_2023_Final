@@ -1,6 +1,7 @@
 const Carrera = require('./carrera.model');
 const Noticia = require('../noticia/noticia.model');
-const { subida } = require('../subidaArchivo/subirArchivo');
+const { subida, borrarArchivo} = require('../subidaArchivo/subirArchivo');
+const path = require('path');
 const getCarrera = async (req, res) => {
   try {
     const carrers = await Carrera.find(); // Utiliza await para esperar la resolución de la promesa
@@ -73,10 +74,23 @@ const deleteCarrera = async (req, res) => {
     if (!deletedCarrera) {
       return res.status(404).json({ error: 'Carrera no encontrada' });
     }
+    // Obtener el nombre del archivo asociado a la carrera
+    let fileName = deletedCarrera.pdf;
+    if (fileName) {
+      const filePath = path.join(fileName); // Ruta del archivo a borrar
+      borrarArchivo(filePath); // Utilizar la función borrarArchivo para eliminar el archivo asociado
+    }
     const noticiasAsociadas = await Noticia.find({ id_carrera: carreraId }); // Buscar las noticias asociadas a la carrera que se eliminará
-    // Eliminar las noticias asociadas
+    // Eliminar las noticias asociadas y archivos correspondientes 
     if (noticiasAsociadas.length > 0) {
-      await Noticia.deleteMany({ id_carrera: carreraId });
+      await Promise.all(noticiasAsociadas.map(async (noticia) => {
+        let noticiaFileName = noticia.img;
+        if (noticiaFileName) {
+          const noticiaFilePath = path.join(noticiaFileName);
+          borrarArchivo(noticiaFilePath); // Eliminar archivo asociado a la noticia
+        }
+        return await Noticia.findByIdAndDelete(noticia._id); // Eliminar la noticia de la base de datos
+      }));
     }
     res.status(200).json({ message: 'Carrera eliminada exitosamente', deletedCarrera });
   } catch (error) {
