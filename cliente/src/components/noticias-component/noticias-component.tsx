@@ -11,6 +11,7 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 import { TypeCarrera } from "../carrera-component/types";
 import _Toast from "../shared/toast-component/toast-component";
+import { descargaArchivo, cargarImagen} from "../../utility/manejoArchivo";
 const Noticias = () => {
   const [noticias, setNoticias] = useState<TypeNoticia[]>([]);
   const [guardadoExitoso, setGuardadoExitoso] = useState(false); // toast
@@ -28,7 +29,7 @@ const Noticias = () => {
     message: ""
   });
   const formatFecha = (fecha: string) => {
-    const fechaFormateada = moment(fecha).format("DD/MM/YYYY"); // Formato de fecha deseado
+    const fechaFormateada = moment(fecha).format("DD/MM/YYYY HH:mm"); // Formato de fecha deseado
     return fechaFormateada;
   };
   const convercionObjeto = (noticia : TypeNoticia, EliminarBotton:boolean) => {
@@ -76,40 +77,11 @@ const Noticias = () => {
   const handlePDFDownload = async (pdf:string) => {
     setLoading(true);
     try {
-      const response = await fetch(`${url_Api.apiArchivo}/d/${pdf}`);
-      if (!response.ok) {
-        throw new Error('Error al descargar el PDF');
-      }
-      // Código para descargar el PDF, si es necesario
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', pdf);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
+      await descargaArchivo(pdf)
     } catch (error) {
       console.error('Error al descargar el PDF:', error);
     } finally {
       setLoading(false);
-    }
-  };
-  const cargarImagen = async (img: string) => {
-    try {
-      if(img != "null" && img != "" && img != null){
-        const response = await fetch(`${url_Api.apiArchivo}/${img}`);
-        if (!response.ok) {
-          throw new Error('Error al mostrar IMG');
-        }
-        const blob = await response.blob(); // Obtener el contenido de la respuesta como un blob
-        const imgUrl = URL.createObjectURL(blob); // Crear una URL para el blob (contenido de la imagen)
-        return imgUrl || reactLogo; // Si la URL está vacía, usar reactLogo
-      }
-      return reactLogo;
-    } catch (error) {
-      console.error('Error al cargar la imagen:', error);
-      return reactLogo; // En caso de error, usar reactLogo
     }
   };
   const cargarImagenes = async () => {
