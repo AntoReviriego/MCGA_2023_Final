@@ -40,6 +40,7 @@ const Registro = () => {
             localStorage.setItem('user', JSON.stringify(user));
             setLoggedInUser(user.email);
             navigate("/");
+            window.location.reload();
         }
         catch(error){
             setLoading(false);
