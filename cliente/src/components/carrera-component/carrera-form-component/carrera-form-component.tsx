@@ -5,12 +5,15 @@ import { TypeCarreraForm } from './types';
 import { useForm } from 'react-hook-form';
 import _Toast from '../../shared/toast-component/toast-component';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Card, Col, Form, Row } from 'react-bootstrap';
+import { Button, Card, CardText, Col, Form, Row } from 'react-bootstrap';
 import { inputRequeridoValidacion, inputTextRequeridoValidacion } from '../../../utility/validaciones';
+import { descargaArchivo } from '../../../utility/manejoArchivo';
+import './carrera-form-component.css';
 const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false); // spinner
   const [guardadoExitoso, setGuardadoExitoso] = useState(false); // toast
+  const [nombrePdf, setNombrePdf] = useState(""); 
   const { id } = useParams<{ id: string }>();
   const {
     register,
@@ -30,6 +33,12 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
     .then(data => {
       Object.keys(data).forEach(key => {
         setValue(key as keyof TypeCarreraForm, data[key as keyof TypeCarreraForm]);
+        if(key == "pdf"){
+          let pdfArchivo = (data[key as keyof TypeCarreraForm]); 
+          if(pdfArchivo != null){
+            setNombrePdf( pdfArchivo.split('\\').pop())
+          }
+        }
       });
     })
     .catch(error => {
@@ -63,7 +72,7 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
       const formData = new FormData();
       formData.append('carrera', data.carrera);
       formData.append('resolucion', data.resolucion);
-      if (data.pdf.length > 0) {
+      if (nombrePdf == null && data.pdf!= null && data.pdf.length > 0) {
         formData.append('pdf', data.pdf[0]);
       }
       const response = await fetch(id ? `${url_Api.apiCarrera}/${id}` : url_Api.apiCarrera, {
@@ -73,7 +82,6 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
       if (response.ok) {
         setLoading(false);
         setGuardadoExitoso(true);
-        console.log(guardadoExitoso);
       }
     } catch (error) {
       console.error('Error al enviar formulario:', error);
@@ -83,6 +91,16 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
   const handleVolver = () => {
     navigate('/carrera');
   }
+  const handlePDFDownload = async (pdf:string) => {
+    setLoading(true);
+    try {
+      await descargaArchivo(pdf)
+    } catch (error) {
+      console.error('Error al descargar el PDF:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -138,10 +156,21 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
                       <Form.Label>Subir PDF</Form.Label>
                       <Form.Control
                         type="file"
-                        value={carreraData?.pdf}
                         {...register('pdf')}
                       />
                     </Form.Group>
+                    <CardText>Archivo actual: {
+                      nombrePdf != "" 
+                      ? ( <span className="badge bg-success cursor-pointer  ms-1"
+                            onClick={() => handlePDFDownload((nombrePdf).split('\\').pop() as string )}
+                          >
+                            { (nombrePdf).split('\\').pop() as string }
+                          </span>
+                        )
+                      : (<span className="badge bg-warning"> No posee </span>)
+                    }
+                     
+                    </CardText>
                   </Row>
                   <Row className="mb-3">
                     <Col md="6" className="d-flex justify-content-start">

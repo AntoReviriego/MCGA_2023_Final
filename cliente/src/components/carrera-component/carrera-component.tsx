@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import _Modal from "../shared/modal-component/modal-component";
 import _Toast from "../shared/toast-component/toast-component";
 import moment from "moment";
+import { descargaArchivo } from "../../utility/manejoArchivo";
 function Carrera() {
   const [carreras, setCarreras] = useState<TypeCarrera[]>([]);
   const [loading, setLoading] = useState(true); // spinner
@@ -80,19 +81,7 @@ function Carrera() {
   const handlePDFDownload = async (pdf:string) => {
     setLoading(true);
     try {
-      const response = await fetch(`${url_Api.apiArchivo}/d/${pdf}`);
-      if (!response.ok) {
-        throw new Error('Error al descargar el PDF');
-      }
-      // Código para descargar el PDF, si es necesario
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', pdf);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
+      await descargaArchivo(pdf)
     } catch (error) {
       console.error('Error al descargar el PDF:', error);
     } finally {
@@ -138,9 +127,7 @@ function Carrera() {
                 <td scope="col">{carrera.resolucion}</td>
                 <td scope="col">
                 {carrera.pdf == null ? (
-                  <span className="badge bg-warning">
-                    Cargar PDF
-                  </span>
+                  <span className="badge bg-warning">Cargar PDF</span>
                 ) : ( 
                     <button className="badge bg-success"
                       onClick={() => handlePDFDownload( (carrera.pdf).split('\\').pop() as string )}
