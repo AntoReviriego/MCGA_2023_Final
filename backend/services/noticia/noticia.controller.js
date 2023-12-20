@@ -1,5 +1,6 @@
 const Noticia = require('./noticia.model');
-const { subida } = require('../subidaArchivo/subirArchivo');
+const { subida, borrarArchivo} = require('../subidaArchivo/subirArchivo');
+const path = require('path');
 const getNoticia = async (req, res) => {
   try {
     const noticia = await Noticia.find().populate('id_carrera'); // Utiliza findById para buscar por ID; 
@@ -74,6 +75,12 @@ const deleteNoticia = async (req, res) => {
     const deletedNoticia = await Noticia.findByIdAndDelete(noticiaId);
     if (!deletedNoticia) {
       return res.status(404).json({ error: 'Noticia no encontrada' });
+    }
+    // Obtener el nombre del archivo asociado a la noticia
+    const fileName = deletedNoticia.img;
+    if (fileName) {
+      const filePath = path.join(fileName); // Ruta del archivo a borrar
+      borrarArchivo(filePath); // Utilizar la función borrarArchivo para eliminar el archivo asociado
     }
     res.status(200).json({ message: 'Noticia eliminada exitosamente', deletedNoticia });
   } catch (error) {

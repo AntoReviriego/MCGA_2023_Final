@@ -1,5 +1,17 @@
 const multer = require('multer');
 const fs = require('fs'); // Módulo FileSystem de Node.js
+const borrarArchivo = (filePath) => {
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath); // Borra el archivo si existe
+      console.log(`Archivo borrado: ${filePath}`);
+    } else {
+      console.log(`El archivo no existe en la ruta: ${filePath}`);
+    }
+  } catch (error) {
+    console.error('Error al borrar el archivo:', error);
+  }
+};
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folder = 'uploads/';
@@ -20,4 +32,4 @@ const storage = multer.diskStorage({
   },
 });
 const subida = multer({ storage: storage });
-module.exports = { subida };
+module.exports = { subida, borrarArchivo };
