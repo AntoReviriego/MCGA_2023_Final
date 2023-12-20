@@ -66,6 +66,10 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
         setLoading(true);
         try {
           const formData = new FormData();
+          if(data.id_carrera === ""){ 
+            // Si el id que viene por parametros es vacio, determinamos que se dejo la carrera de turno, por eso establecemos el id de la siguiente forma
+            data.id_carrera = carreras[0]._id;
+          }
           formData.append('titulo', data.titulo);
           formData.append('cuerpo', data.cuerpo);
           formData.append('id_carrera', data.id_carrera);
