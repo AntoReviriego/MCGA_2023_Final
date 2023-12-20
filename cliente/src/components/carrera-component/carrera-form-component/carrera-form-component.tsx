@@ -7,7 +7,6 @@ import _Toast from '../../shared/toast-component/toast-component';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { inputRequeridoValidacion, inputTextRequeridoValidacion } from '../../../utility/validaciones';
-
 const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false); // spinner
@@ -20,7 +19,6 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
     setValue,
   } = useForm<TypeCarreraForm>();
   const navigate = useNavigate();
-
   const getCarreraId = async () => {
     await fetch(`${url_Api.apiCarrera}/${id}`)
     .then(data => {
@@ -38,13 +36,11 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
       console.error('Error de datos. Respuesta:', error);
     });
   }
-
   useEffect(() => {
     if(id !== undefined){
-      getCarreraId()
+      getCarreraId();
     }
   }, [id, setValue]);
-
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -61,7 +57,6 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
       console.error('Errores en el formulario:', errors);
     })();
   };
-
   const onSubmit = async (data:TypeCarreraForm) => {
     setLoading(true);
     try {
@@ -78,16 +73,15 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
       if (response.ok) {
         setLoading(false);
         setGuardadoExitoso(true);
-        console.log(guardadoExitoso)
+        console.log(guardadoExitoso);
       }
     } catch (error) {
       console.error('Error al enviar formulario:', error);
       setLoading(false);
     }
   };
-
   const handleVolver = () => {
-    navigate('/carrera')
+    navigate('/carrera');
   }
 
   return (
@@ -166,5 +160,4 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
     </>
   );
 }
-
 export default CarreraForm;

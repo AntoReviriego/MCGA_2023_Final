@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from "react";
 import { TypeLogin } from "./types";
 import { useForm } from "react-hook-form";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -10,7 +10,6 @@ import { EmailValidacion, PasswordValidacion } from "../../utility/validaciones"
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import _Toast from "../shared/toast-component/toast-component";
 import Spinner from "../shared/spinner-component/spinner-component";
-
 const Login = () => {
     const [validated, setValidated] = useState(false);
     const [guardadoExitoso, setGuardadoExitoso] = useState(false); // toast
@@ -23,7 +22,6 @@ const Login = () => {
     } = useForm<TypeLogin>();
     const navigate = useNavigate();
     const { setLoggedInUser } = useUser() as UserContextType;
-
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget;
         if (form.checkValidity() === false) {
@@ -33,9 +31,8 @@ const Login = () => {
         setValidated(true);
         validateForm(onSubmit)(e); // Ejecuta la lógica de handleSubmit de react-hook-form
     };
-
     const onSubmit = async (data:TypeLogin) =>{
-        setLoading(true)
+        setLoading(true);
         try{
             const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
             const user = userCredential.user; 
@@ -110,4 +107,4 @@ const Login = () => {
         </>
     )
 }
-export default Login
+export default Login;

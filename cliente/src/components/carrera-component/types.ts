@@ -3,5 +3,5 @@ export type TypeCarrera = {
     carrera: string;
     resolucion: string;
     pdf: string;
-    creado: Date
+    creado: Date;
 }

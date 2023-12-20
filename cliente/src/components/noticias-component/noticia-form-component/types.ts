@@ -4,5 +4,5 @@ export type TypeNoticiaForm = {
     cuerpo: string;
     id_carrera: string;
     autor:string; 
-    img: string
+    img: string;
 }

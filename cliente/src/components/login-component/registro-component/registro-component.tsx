@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from "react";
 import { TypeLogin } from "../types";
 import { useForm } from "react-hook-form";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -10,7 +10,6 @@ import { EmailValidacion, PasswordValidacion } from "../../../utility/validacion
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import Spinner from "../../shared/spinner-component/spinner-component";
 import _Toast from "../../shared/toast-component/toast-component";
-
 const Registro = () => {
     const [validated, setValidated] = useState(false);
     const [guardadoExitoso, setGuardadoExitoso] = useState(false); // toast
@@ -23,7 +22,6 @@ const Registro = () => {
     } = useForm<TypeLogin>();
     const navigate = useNavigate();
     const { setLoggedInUser } = useUser() as UserContextType;
-
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget;
         if (form.checkValidity() === false) {
@@ -33,22 +31,21 @@ const Registro = () => {
         setValidated(true);
         validateForm(onSubmit)(e); // Ejecuta la lógica de handleSubmit de react-hook-form
     };
-
     const onSubmit = async (data:TypeLogin) =>{
-        setLoading(true)
+        setLoading(true);
         try{
             const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
             const user = userCredential.user; 
-            localStorage.setItem('token', await user.getIdToken())
-            localStorage.setItem('user', JSON.stringify(user))
-            setLoggedInUser(user.email)
-            navigate("/")
+            localStorage.setItem('token', await user.getIdToken());
+            localStorage.setItem('user', JSON.stringify(user));
+            setLoggedInUser(user.email);
+            navigate("/");
         }
         catch(error){
             setLoading(false);
             setGuardadoExitoso(true);
             reset(); // Restablece los valores del formulario en caso de error
-            console.error("Error al registrarse y loguearse: " + error)
+            console.error("Error al registrarse y loguearse: " + error);
         }
     }
 
@@ -110,4 +107,4 @@ const Registro = () => {
         </>
     )
 }
-export default Registro
+export default Registro;

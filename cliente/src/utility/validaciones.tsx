@@ -5,7 +5,6 @@ export const EmailValidacion = {
       message: "Ingresa un correo válido",
     },
 };
-  
 export const PasswordValidacion = {
     required: "Este campo es requerido",
     minLength: {
@@ -13,11 +12,9 @@ export const PasswordValidacion = {
         message: "La contraseña debe tener al menos 8 caracteres.",
     },
 };
-
 export const inputRequeridoValidacion = {
     required: "Este campo es requerido",
 };
-
 export const inputTextRequeridoValidacion = {
     required: "Este campo es requerido",
     minLength: {
@@ -25,7 +22,6 @@ export const inputTextRequeridoValidacion = {
         message: "El campo debe tener al menos 8 caracteres.",
     },
 };
-
 export const inputTextareaRequeridoValidacion = {
     required: "Este campo es requerido",
     minLength: {

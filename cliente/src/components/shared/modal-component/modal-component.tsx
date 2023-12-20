@@ -1,8 +1,6 @@
 import { Modal } from "react-bootstrap";
-
 const _Modal = (props:any) => {
     const { title, subtitle, message, data, type, verEliminarBotton, EliminarRegistro, ...modalProps } = props;
-
     const handleEliminar = async () => {
         if (EliminarRegistro) {
             EliminarRegistro();
@@ -31,9 +29,7 @@ const _Modal = (props:any) => {
                             <strong>{item.key}:</strong> {item.value}
                             </li>
                         ))}
-
                         </ul>
-                        
                     </>
                 ) : (
                     <div>
@@ -41,7 +37,6 @@ const _Modal = (props:any) => {
                             <p key={index}> <strong>{item.key}:</strong> {item.value} </p>
                         ))}
                     </div>
-
                 )   
             }
             <p>

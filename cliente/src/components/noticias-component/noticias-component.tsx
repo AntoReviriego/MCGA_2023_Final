@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import reactLogo from "../../assets/react.svg"
+import reactLogo from "../../assets/react.svg";
 import { TypeNoticia } from "./types";
 import Spinner from "../shared/spinner-component/spinner-component";
 import url_Api from "../../services/api.services";
@@ -11,7 +11,6 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 import { TypeCarrera } from "../carrera-component/types";
 import _Toast from "../shared/toast-component/toast-component";
-
 const Noticias = () => {
   const [noticias, setNoticias] = useState<TypeNoticia[]>([]);
   const [guardadoExitoso, setGuardadoExitoso] = useState(false); // toast
@@ -28,25 +27,22 @@ const Noticias = () => {
     type:"",
     message: ""
   });
-
   const formatFecha = (fecha: string) => {
     const fechaFormateada = moment(fecha).format("DD/MM/YYYY"); // Formato de fecha deseado
     return fechaFormateada;
   };
-
   const convercionObjeto = (noticia : TypeNoticia, EliminarBotton:boolean) => {
     const excludedProperties = ["_id", "__v", "titulo", "cuerpo", "img" ];
     const filteredNoticia = Object.fromEntries(
       Object.entries(noticia).filter(([key]) => !excludedProperties.includes(key))
     );
     const noticiaData = Object.entries(filteredNoticia);
-    let label = ['Carrera','Autor',  'Creado', 'Ultima actualización']
+    let label = ['Carrera','Autor',  'Creado', 'Ultima actualización'];
     const formattedData:any = noticiaData.map(([key, value], i) => ({
       key: label[i], 
       value: key === "creado" || key === "actualizado" ? formatFecha(value as string) 
       :  key === "id_carrera" ? (value as TypeCarrera).carrera : value, 
     }));
-
     setModalData({
       title: "Noticia", // Usar un campo relevante de la carrera para el título
       id: noticia._id,
@@ -58,7 +54,6 @@ const Noticias = () => {
     });
     setModalShow(true);
   }
-
   const cargarNoticias = async () => {
     try {
       const response = await fetch(url_Api.apiNoticia);
@@ -72,15 +67,12 @@ const Noticias = () => {
       console.error("Error al cargar las noticias:", error);
     }
   };
-  
   useEffect(() => {
     cargarNoticias();
   }, []);
-
   useEffect(() => {
     cargarImagenes();
   }, [noticias]); // Vuelve a cargar las imágenes cuando cambian las noticias
-  
   const handlePDFDownload = async (pdf:string) => {
     setLoading(true);
     try {
@@ -91,12 +83,10 @@ const Noticias = () => {
       // Código para descargar el PDF, si es necesario
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-  
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', pdf);
       document.body.appendChild(link);
-  
       link.click();
       link.parentNode?.removeChild(link);
     } catch (error) {
@@ -105,7 +95,6 @@ const Noticias = () => {
       setLoading(false);
     }
   };
-
   const cargarImagen = async (img: string) => {
     try {
       if(img != "null" && img != "" && img != null){
@@ -123,7 +112,6 @@ const Noticias = () => {
       return reactLogo; // En caso de error, usar reactLogo
     }
   };
- 
   const cargarImagenes = async () => {
     const images: { [key: string]: string } = {};
     await Promise.all(
@@ -137,12 +125,10 @@ const Noticias = () => {
             images[index] = reactLogo; // Usa reactLogo en caso de error
           }
         }
-       
       })
     );
     setLoadedImages(images);
   };
-
   const handleDelete = async () => {
     try {
       setGuardadoExitoso(false);
@@ -164,7 +150,6 @@ const Noticias = () => {
       console.error('Error al eliminar:', error);
     }
   };
-
  
   return (
     <>
@@ -257,4 +242,4 @@ const Noticias = () => {
     </>
   )
 }
-export default Noticias
+export default Noticias;

@@ -1,5 +1,5 @@
-import { Button, Card, Col, Form, Row } from "react-bootstrap"
-import _Toast from "../../shared/toast-component/toast-component"
+import { Button, Card, Col, Form, Row } from "react-bootstrap";
+import _Toast from "../../shared/toast-component/toast-component";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,7 +10,6 @@ import url_Api from "../../../services/api.services";
 import { TypeCarrera } from "../../carrera-component/types";
 import { UserContextType } from "../../../provider/type";
 import { useUser } from "../../../provider/user.context.provider";
-
 const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
     const [carreras, setCarreras] = useState<TypeCarrera[]>([]);
     const [validated, setValidated] = useState(false);
@@ -26,7 +25,6 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
         setValue,
     } = useForm<TypeNoticiaForm>();
     const navigate = useNavigate();
-
     const getNoticiaId = async () => {
         await fetch(`${url_Api.apiNoticia}/${id}`)
         .then(data => {
@@ -48,7 +46,6 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
       const selectedId = event.target.value;
       setSelectedCarrera(selectedId);
     };
-
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
@@ -65,7 +62,6 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
           console.error('Errores en el formulario:', errors);
         })();
       };
-    
       const onSubmit = async (data:TypeNoticiaForm) => {
         setLoading(true);
         try {
@@ -90,11 +86,9 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
           setLoading(false);
         }
       };
-
     const handleVolver = () => {
-        navigate('/noticias')
+        navigate('/noticias');
     }
-
     const cargarCarrera = async () => {
       try {
         const response = await fetch(url_Api.apiCarrera);
@@ -108,11 +102,10 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
         console.error("Error al cargar las noticias:", error);
       }
     };
-
     useEffect(() => {
       cargarCarrera();
       if(id !== undefined){
-        getNoticiaId()
+        getNoticiaId();
       }
     }, [id, setValue]);
     
@@ -205,4 +198,4 @@ const NoticiaForm = ({ noticiaData }: { noticiaData?: TypeNoticiaForm }) => {
     </>
   )
 }
-export default NoticiaForm
+export default NoticiaForm;

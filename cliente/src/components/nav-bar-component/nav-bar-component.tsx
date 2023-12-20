@@ -1,5 +1,5 @@
 import { signOut } from "firebase/auth";
-import { useEffect } from "react"
+import { useEffect } from "react";
 import { NavDropdown } from "react-bootstrap";
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -8,7 +8,6 @@ import { auth } from "../../firebase";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../provider/user.context.provider";
 import { UserContextType } from "../../provider/type";
-
 const NavBar = () => {
     const navigate = useNavigate();
     const { user, setLoggedInUser } = useUser() as UserContextType; 
@@ -21,7 +20,6 @@ const NavBar = () => {
             }
         }
     }, []);
-
     const handleLogOut = async () => {
         await signOut(auth);
         localStorage.removeItem('token');
@@ -67,4 +65,4 @@ const NavBar = () => {
         </>
     )
 }
-export default NavBar
+export default NavBar;

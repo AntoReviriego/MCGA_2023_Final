@@ -1,9 +1,8 @@
-import { BrowserRouter, Routes } from 'react-router-dom'
+import { BrowserRouter, Routes } from 'react-router-dom';
 import { UserProvider } from './provider/user.context.provider'; 
-import './App.css'
-import NavBar from './components/nav-bar-component/nav-bar-component'
-import RenderRouter from './routers/index'
-
+import './App.css';
+import NavBar from './components/nav-bar-component/nav-bar-component';
+import RenderRouter from './routers/index';
 function App() {
     return (
         <UserProvider>
@@ -18,4 +17,4 @@ function App() {
         </UserProvider>
     )
 }
-export default App
+export default App;

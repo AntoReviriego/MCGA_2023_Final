@@ -1,6 +1,5 @@
 const Noticia = require('./noticia.model');
 const { subida } = require('../subidaArchivo/subirArchivo');
-
 const getNoticia = async (req, res) => {
   try {
     const noticia = await Noticia.find().populate('id_carrera'); // Utiliza findById para buscar por ID; 
@@ -10,22 +9,20 @@ const getNoticia = async (req, res) => {
     res.status(500).json({ error: 'Error al obtener las noticias' });
   }
 };
-
 const getNoticiaById = async (req, res) => {
   try {
     const id = req.params.id; // Acceder directamente al parámetro id
     const noticia = await Noticia.findById(id);
     res.status(200).json(noticia);
   } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: 'Error al obtener la noticia' });
+    console.log(error);
+    res.status(500).json({ error: 'Error al obtener la noticia' });
   }
 };
-
 const postNoticia = async (req, res) => {
   subida.single('img')(req, res, async (err) => {
     if (err) {
-      return res.status(500).json({ error: 'Error al subir el archivo', err });
+      return res.status(500).json({ error: 'Error al subir la imagen', err });
     }
     try {
       const newNoticia = new Noticia({
@@ -37,42 +34,40 @@ const postNoticia = async (req, res) => {
         actualizado: Date.now(),
         img: req.file ? req.file.path.split('/').pop() : null, // Guardar la ruta del archivo si existe
       });
-      
       const savedNoticia = await newNoticia.save();
       res.status(201).json(savedNoticia);
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: 'Error al guardar la noticia' });
-    }  });
+    }  
+  });
 };
-
 const patchNoticia = async (req, res) => {
   try {
     const  id  = req.params.id
     subida.single('img')(req, res, async (err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Error al subir el archivo', err });
-    }
-    try {
-      const {titulo, cuerpo, id_carrera} = req.body;
-      const noticiaUpdate = await Noticia.findByIdAndUpdate(id, { 
-        titulo: titulo, 
-        cuerpo: cuerpo,
-        id_carrera: id_carrera,
-        img: req.file ? req.file.path.split('/').pop() : null,
-        actualizado: Date.now()
-      });
-      res.status(200).json(noticiaUpdate); // Devuelve el documento guardado como respuesta
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: 'Error al guardar la noticia' });
-    }
-  });
-} catch (error) {
-  res.status(500).json({ error: 'Error al editar la noticia' }); // Manejo de errores
-}
+      if (err) {
+        return res.status(500).json({ error: 'Error al subir la imagen', err });
+      }
+      try {
+        const {titulo, cuerpo, id_carrera} = req.body;
+        const noticiaUpdate = await Noticia.findByIdAndUpdate(id, { 
+          titulo: titulo, 
+          cuerpo: cuerpo,
+          id_carrera: id_carrera,
+          img: req.file ? req.file.path.split('/').pop() : null,
+          actualizado: Date.now()
+        });
+        res.status(200).json(noticiaUpdate); // Devuelve el documento guardado como respuesta
+      } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Error al guardar la noticia' });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al editar la noticia' }); // Manejo de errores
+  }
 };
-
 const deleteNoticia = async (req, res) => {
   try {
     const noticiaId = req.params.id; // Suponiendo que el ID está en los parámetros de la solicitud
@@ -86,8 +81,6 @@ const deleteNoticia = async (req, res) => {
     res.status(500).json({ error: 'Error al eliminar la noticia' });
   }
 };
-
-
 module.exports = {
     getNoticia,
     getNoticiaById,

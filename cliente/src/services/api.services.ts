@@ -3,5 +3,4 @@ const url_Api = {
     apiArchivo: 'http://localhost:3000/api/archivo',
     apiNoticia: 'http://localhost:3000/api/noticia'
 }
-
 export default  url_Api;

@@ -12,11 +12,8 @@ const storage = multer.diskStorage({
     else{
       nombreArchivo = `_${Date.now()}_${file.originalname}`;
     }
-
     cb(null, nombreArchivo); // Nombre de archivo combinado único
   },
 });
-
 const subida = multer({ storage: storage });
-
 module.exports = { subida };
