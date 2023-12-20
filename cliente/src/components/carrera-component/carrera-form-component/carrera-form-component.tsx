@@ -72,7 +72,7 @@ const CarreraForm = ({ carreraData }: { carreraData?: TypeCarreraForm }) =>  {
       const formData = new FormData();
       formData.append('carrera', data.carrera);
       formData.append('resolucion', data.resolucion);
-      if (nombrePdf == null && data.pdf!= null && data.pdf.length > 0) {
+      if (data.pdf != null && data.pdf.length > 0) {
         formData.append('pdf', data.pdf[0]);
       }
       const response = await fetch(id ? `${url_Api.apiCarrera}/${id}` : url_Api.apiCarrera, {
